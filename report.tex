@@ -139,9 +139,9 @@ These tables and plots show a summary for each tested different configuration.
     \underline{\texttt{LPUSH:}}\\
 
     With no optimization, python performs close to 60\% of \texttt{hiredis (C)} performance:
-    $$\frac{\texttt{python perf}}{\texttt{redis-benchmark perf}}=\frac{46,150}{79,977}=57.70\%$$
+    $$\frac{\texttt{python perf}}{\texttt{hiredis (C) perf}}=\frac{46,150}{79,977}=57.70\%$$
     With pipelining, python performs close to only 30\% of \texttt{hiredis (C)} performance:
-    $$\frac{\texttt{python perf}}{\texttt{redis-benchmark perf}}=\frac{101,535}{308,386}=30.91\%$$
+    $$\frac{\texttt{python perf}}{\texttt{hiredis (C) perf}}=\frac{101,535}{308,386}=30.91\%$$
 \end{minipage}
 
 
@@ -152,9 +152,9 @@ These tables and plots show a summary for each tested different configuration.
     \underline{\texttt{POP:}}\\
 
     With no optimization, python performs close to 60\% of \texttt{hiredis (C)} performance::
-    $$\frac{\texttt{python perf}}{\texttt{redis-benchmark perf}}=\frac{52,383}{93,724}=55.89\%$$
+    $$\frac{\texttt{python perf}}{\texttt{hiredis (C) perf}}=\frac{52,383}{93,724}=55.89\%$$
     With pipelining, python performs close to only 13\% of \texttt{hiredis (C)} performance:
-    $$\frac{\texttt{python perf}}{\texttt{redis-benchmark perf}}=\frac{91,402}{720,310}=12.69\%$$
+    $$\frac{\texttt{python perf}}{\texttt{hiredis (C) perf}}=\frac{91,402}{720,310}=12.69\%$$
 \end{minipage}
 
 
