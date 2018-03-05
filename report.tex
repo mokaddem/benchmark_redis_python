@@ -62,13 +62,13 @@ In the course of a software development, I needed a buffering medium which was a
     \item Data persistence
     \item Easy to use
 \end{itemize}
-Where Redis suits these.\\
+Where Redis clearly suits them.\\
 
 My software being written in python, I evidently used one of the redis python client available; \texttt{redis-py} is the recommended one.\\
 
 This report focuses only on throughput, so data size was fixed and was fitting my needs.
 
-It contains benchmarks of \texttt{redis-py}, where we can see that it is particularly slow compared to the c-written \texttt{hiredis} library or \texttt{redis-benchmark}. It also presents some features and technics to boost performances, as well as comparing methods to rapidly create strings.
+It contains benchmarks of \texttt{redis-py}, where we can see that it is particularly slow compared to the c-written \texttt{hiredis} library or \texttt{redis-benchmark}. It also presents some features and techniques to boost performances, as well as comparing methods to rapidly create strings.
 
 \chapter{Aggregated results}
 \section{Summary}
@@ -102,7 +102,7 @@ These tables and plots show a summary for each tested different configuration.
 }
 \footnotetext{Official C client}
 
-\subsection{Poping - \texttt{RPOP} or \texttt{LRANGE/LTRIM}}
+\subsection{Popping - \texttt{RPOP} or \texttt{LRANGE/LTRIM}}
 
 \makebox[\textwidth][c]{
     \begin{tabular}{|l|l|c|lll|rrr|}
@@ -194,7 +194,7 @@ All benchmarks have been performed using these parameters
             \item Number of \texttt{POP} may differ if we use \texttt{RPOP} or \texttt{LRANGE/LTRIM}
         \end{itemize}
     \item For each tests, we are using two different parsers for responses: PythonParser and HiredisParser\footnote{Hiredis is a C library that is available with Python bindings, \texttt{redis-py} will attempt to use the HiredisParser if you have the hiredis module installed and will fallback to the PythonParser otherwise.}
-    \item In order to simulate a working software poping and adding elements to a buffer, the logic of the benchmark is the folloging:
+    \item In order to simulate a working software popping and adding elements to a buffer, the logic of the benchmark is the folloging:
         \begin{itemize}
             \item[] \begin{lstlisting}
 # push
@@ -209,7 +209,7 @@ for i in range(int(c/d)):
 \end{lstlisting}
         \end{itemize}
         \item For each benchmark, the processing has been done 10 times, then averaged
-        \item For each 100 $\left(\frac{100,000}{1,000}\right)$ iterations, we are pushing and poping 1,000 elements
+        \item For each 100 $\left(\frac{100,000}{1,000}\right)$ iterations, we are pushing and popping 1,000 elements
 \end{itemize}
 
 %%%
@@ -217,7 +217,7 @@ for i in range(int(c/d)):
 %%%
 \newpage
 \section{Naive implementation\label{sec:naive}}
-For each payloads to be buffered, we push them immediatly. Then, we retrieve them one at a time with a simple \texttt{POP} command.\\
+For each payload to be buffered, we push them immediatly. Then, we retrieve them one at a time with a simple \texttt{POP} command.\\
 
 \begin{minipage}[t]{0.45\textwidth}
 \textbf{Source code}\\
@@ -275,7 +275,7 @@ time_pop += time.time()-t1
 \newpage
 \section{Pipeline feature\label{sec:pipeline}}
 Here, we use the redis pipeline\footnote{Pipelining allows to send multiple commands to the server without waiting for the replies, and finally read the replies in a single step} feature.
-For each payload to be buffered, we push them in a pipeline wich will execute pending command every 1000 pushing operation. Then, we retrieve them by sending the POP command in a pipeline which will also execute pending command every 1000 poping operation.\\
+For each payload to be buffered, we push them in a pipeline wich will execute pending commands every 1000 pushing operations. Then, we retrieve them by sending the POP command in a pipeline which will also execute pending commands every 1000 popping operations.\\
 
 \begin{minipage}[t]{0.45\textwidth}
 \textbf{Source code}\\
@@ -337,7 +337,7 @@ tpop += time.time()-t1
 %%%
 \newpage
 \section{Replacing \texttt{RPOP} by \texttt{LRANGE/LTRIM}\label{sec:lrange}}
-In this implementation, we are still using the redis pipeline feature for pushing data into the buffer, but we modify the poping behavior.
+In this implementation, we are still using the redis pipeline feature for pushing data into the buffer, but we modify the popping behavior.
 Instead of sending one POP command at a time to the pipeline, we fetch a range (100 items) of buffered data with \texttt{LRANGE}, then we trim the buffer so that it mirror the effect of a \texttt{POP} command.\\
 
 \begin{minipage}[t]{0.45\textwidth}
@@ -403,7 +403,7 @@ tpop += time.time()-t1
 \section{Using \texttt{redis-cli --pipe}\label{sec:cli}}
 In this implementation, we are still using the redis pipeline feature and the \texttt{LRANGE/LTRIM} replacement of \texttt{POP}. However, we will use the \texttt{redis-cli} binary (provided by redis) with the \inlinecode{--pipe} options\footnote{\texttt{redis-cli --pipe} consists in writing new commands while you read replies at the same time, ignoring the round trip time for every command}.
 
-In order to use this binary, we have to generate the valid redis protocol from the wanted command. which will be writen to the STDIN of \texttt{redis-cli}.\\
+In order to use this binary, we have to generate the valid redis protocol for the wanted command, which will be written to the STDIN of \texttt{redis-cli}.\\
 
 \begin{minipage}[t]{0.45\textwidth}
 \textbf{Source code}\\
@@ -467,7 +467,7 @@ tpop += time.time()-t1
 %%%
 \newpage
 \section{Generating redis protocol\label{sec:proto}}
-We saw in section ~\ref{sec:cli} that we need to generate the redis protocol ourself. We will now see differents implentation of doing so, each one with drastically perfomance improvement.
+We saw in section ~\ref{sec:cli} that we need to generate the redis protocol ourself. We will now see differents implentation of doing so, each one with drastically performance improvement.
 
 For each algorythm, we use the same source code as in ~\ref{sec:cli} with the \texttt{HiredisParser}.
 
@@ -492,7 +492,7 @@ def generate_redis_proto_format(cmd, key, value=''):
 \end{lstlisting}
 
 \textbf{Profiling summary}\\
-It should be noted that the cumulative CPU time of \texttt{process\_message} entirely depends on the function implentation. Still, it is given to starting point for comparision.\\
+It should be noted that the cumulative CPU time of \texttt{process\_message} entirely depends on the function implentation. Still, it is given as a starting point for comparision.\\
 
 \begin{tabular}{|l|l|}
     \hline
@@ -567,9 +567,9 @@ def generate_redis_proto_subst(cmd, key, value=''):
 \end{tabular}
 
 \chapter*{Conclusion}
-We saw that it is not recommended to use \texttt{redis-py} if we need pure throughput. Even so, some features like pipelining or using a different parser increase reasonably the performance, we are far from those achieved by \texttt{hiredis (C)}.\\
+We saw that it is not recommended to use \texttt{redis-py} if we need pure throughput. Even so, some features like pipelining or using a different parser increase the performance reasonably, we are still far from those achieved by \texttt{hiredis (C)}.\\
 
-In anycase, using the HiredisParser increased performances up to 40\% for our case. Don't forget: \texttt{redis-py} uses \texttt{HiredisParser} if it is installed, therefore:\\
+In anycase, using the HiredisParser can increase performances up to 40\% for our case. Don't forget: \texttt{redis-py} uses \texttt{HiredisParser} if it is installed, therefore:\\
 
 
 \begin{minipage}{0.3\linewidth}
