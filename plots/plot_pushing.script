@@ -1,0 +1,26 @@
+set style line 1 lc rgb "red"
+set style line 2 lc rgb "blue"
+set style line 3 lc rgb "orange"
+set style line 4 lc rgb "green"
+
+set xtics ("No optimization" 0.5, "Pipelining" 3.0, "redis-cli --pipe" 5.0)
+
+set terminal png enhanced
+set output "pushing.png"
+set boxwidth 0.5
+set style fill solid
+set yrange [0:1500000]
+set grid
+set ylabel "Operation/sec"
+
+
+plot 'data_push_Pparser.dat' every 2 using 1:2 with boxes ls 1 title "PythonParser",\
+     'data_push_Pparser.dat'  every 2::1 using 1:2 with boxes ls 2 title "HiredisParser",\
+     'data_push_Pbench.dat'  every 2 using 1:2 with boxes ls 3 title "hiredis (C)",\
+     'data_push_Pbench.dat'  every 2::1 using 1:2 with boxes ls 4 title "redis-benchmark",\
+
+#plot 'data_push_Pparser.dat' every 2 using 1:2 with boxes ls 1 title "PythonParser",\
+#     'data_push_Pparser.dat'  every 2::1 using 1:2 with boxes ls 2 title "HiredisParser",\
+#     'data_push_Pbench.dat'  every 1 using 1:2 with boxes ls 3 title "redis-benchmark",\
+#     'data_push_Pparser.dat' using 1:(10000):2 with labels title "",\
+#     'data_push_Pbench.dat' using 1:(10000):2 with labels title ""

@@ -1,0 +1,20 @@
+set style line 1 lc rgb "red"
+set style line 2 lc rgb "blue"
+set style line 4 lc rgb "green"
+set style line 3 lc rgb "orange"
+
+set xtics ("No optimization" 0.5, "Pipelining" 3.0, "LRANGE/LTRIM" 5.25)
+
+set terminal png enhanced
+set output "poping.png"
+set boxwidth 0.5
+set style fill solid
+set yrange [0:3000000]
+set grid
+set ylabel "Operation/sec"
+
+
+plot 'data_pop.dat' every 2 using 1:2 with boxes ls 1 title "PythonParser",\
+     'data_pop.dat' every 2::1 using 1:2 with boxes ls 2 title "HiredisParser",\
+     'data_pop_bench.dat' every 2 using 1:2 with boxes ls 3 title "hiredis (C)",\
+     'data_pop_bench.dat' every 2::1 using 1:2 with boxes ls 4 title "redis-benchmark"
